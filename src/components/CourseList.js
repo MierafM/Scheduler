@@ -5,6 +5,11 @@ import Course from './Course';
 const CourseList = ({ courses }) => {
     const [term, setTerm] = useState('Fall');
     const [selected, setSelected] = useState([]);
+
+    if (scheduleChanged(selected, courses)) {
+        setSelected([])
+      };
+      
     const termCourses = Object.values(courses).filter(course => term === getCourseTerm(course));
     
     return (
@@ -33,34 +38,6 @@ const TermButton = ({term, setTerm, checked}) => (
 </>
 );
 
-// const Course = ({ course, selected, setSelected }) => {
-//     const isSelected = selected.includes(course);
-//     const isDisabled = !isSelected && hasConflict(course, selected);
-//     const style = {
-//       backgroundColor: isDisabled? 'lightgrey' : isSelected ? 'lightgreen' : 'white'
-//     };
-//     return (
-//       <div className="card m-1 p-2" 
-//         style={style}
-//         onClick={isDisabled ? null : () =>  setSelected(toggle(course, selected))}>
-//         <div className="card-body">
-//           <div className="card-title">{ getCourseTerm(course) } CS { getCourseNumber(course) }</div>
-//           <div className="card-text">{ course.title }</div>
-//           <div className="card-text">{ course.meets }</div>
-//         </div>
-//       </div>
-//     );
-//   };
-
-// const getCourseNumber = course => (
-// course.id.slice(1, 4)
-// );
-
-// const toggle = (x, lst) =>(
-// // if class added remove, else add 
-// lst.includes(x) ? lst.filter(y => y !== x) : [x, ...lst]
-// )
-
 // creates button and makes sure selected button is highlighted
 const TermSelector = ({term, setTerm}) => (
     <div className="btn-group">
@@ -71,5 +48,9 @@ const TermSelector = ({term, setTerm}) => (
     }
     </div>
   );
+
+const scheduleChanged = (selected, courses) => (
+selected.some(course => course !== courses[course.id])
+);
 
 export default CourseList;
