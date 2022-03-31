@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {hasConflict, getCourseTerm, terms } from '../utilities/times';
 import Course from './Course';
+import { signInWithGoogle, signOut, useUserState } from '../utilities/firebase';
 // creates term var and sets it to default, passes state to term selector
 const CourseList = ({ courses }) => {
     const [term, setTerm] = useState('Fall');
@@ -39,15 +40,35 @@ const TermButton = ({term, setTerm, checked}) => (
 );
 
 // creates button and makes sure selected button is highlighted
-const TermSelector = ({term, setTerm}) => (
-    <div className="btn-group">
-    { 
-      Object.values(terms).map(value => (
-        <TermButton key={value} term={value} setTerm={setTerm} checked={value === term} />
-      ))
-    }
+const TermSelector = ({term, setTerm}) => {
+  const [user] = useUserState();
+  return (
+    <div className="btn-toolbar justify-content-between">
+      <div className="btn-group">
+      { 
+        Object.values(terms).map(
+          value => <TermButton key={value} term={value} setTerm={setTerm} checked={value === term} />
+        )
+      }
+      </div>
+      { user ? <SignOutButton /> : <SignInButton /> }
     </div>
   );
+};
+
+const SignInButton = () => (
+  <button className="btn btn-secondary btn-sm"
+      onClick={() => signInWithGoogle()}>
+    Sign In
+  </button>
+);
+
+const SignOutButton = () => (
+  <button className="btn btn-secondary btn-sm"
+      onClick={() => signOut()}>
+    Sign Out
+  </button>
+);
 
 const scheduleChanged = (selected, courses) => (
 selected.some(course => course !== courses[course.id])
